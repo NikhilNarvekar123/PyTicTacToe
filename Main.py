@@ -1,6 +1,6 @@
 ''' 
 Interactive tic-tac-toe for two players, with readable code for learners
-POTENTIAL BUGS: If input is not a number, game will crash
+POTENTIAL BUGS: If input is not a number, game will crash :-(
 '''
 
 
@@ -55,8 +55,11 @@ def gameCheck1():
       dif = (pos[j+2] - pos[j+1] == pos[j+1] - pos[j])
       wow = pos[j+1] - pos[j]
 
-      if dif and (wow == 3 or wow == 1 or wow == 4):
+      if dif and (wow == 3 or wow == 4):
         return True
+      elif dif and (wow == 1):
+        if not ((3 in pos and 4 in pos) or (4 in pos and 5 in pos)):
+          return True
   
   return False
 def gameCheck2():
@@ -74,8 +77,12 @@ def gameCheck2():
       dif = (pos[j+2] - pos[j+1] == pos[j+1] - pos[j])
       wow = pos[j+1] - pos[j]
 
-      if dif and (wow == 3 or wow == 1 or wow == 4):
+      if dif and (wow == 3 or wow == 4):
         return True
+      elif dif and (wow == 1):
+        if not ((3 in pos and 4 in pos) or (4 in pos and 5 in pos)):
+          return True
+
   
   return False
 
