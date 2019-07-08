@@ -1,7 +1,17 @@
 ''' 
 Interactive tic-tac-toe for two players, with readable code for learners
 POTENTIAL BUGS: If input is not a number, game will crash :-(
+    
+--Created By Young Bytes--
+
 '''
+
+# Input Variables
+p1 = ""
+p2 = ""
+winner = -1
+victoryMsg = "WINNER WINNER CHICKEN DINNER! Congrats Player "
+tieMsg = "Oops--Tie Game :-("
 
 
 # Board objects
@@ -31,13 +41,23 @@ def printBoard():
       print("\n"+sep)
     else:
       print("\n"+border+"\n")  
+
 def modifyMem(inp, player):
+  
+  verifiedIn = 0
+
+
+  while not inputCheck(inp):
+    inp = input("Invalid response! Try again.")
+  verifiedIn = int(inp)
+  
   for i in range(len(elem)):
-    if elem[i] == str(inp):
+    if elem[i] == str(verifiedIn):
       if(player == 1):
         elem[i] = "X"
       else:
-        elem[i] = "O"   
+        elem[i] = "O"
+    
 
 # Check board every round
 def gameCheck1():
@@ -86,21 +106,18 @@ def gameCheck2():
   
   return False
 
-# TODO: Fix to prevent game crashing
+# TODO: Function to check whether input is valid each turn
+# Current filters out wrong format input, but still cannot stop players from filling filled up spaces
 def inputCheck(x):
-  cond = False
-  for i in range(1,10):
-    if x == str(i):
-      cond = True
-      
-  return cond
+  try:
+    x = int(x)
+    if x >= 1 and x <= 9:
+      if elem[x-1] != "X" or elem[x-1] != "O":
+        return True  
+    return False
+  except:
+    return False
 
-# Input Variables
-p1 = ""
-p2 = ""
-winner = -1
-victoryMsg = "WINNER WINNER CHICKEN DINNER! Congrats Player "
-tieMsg = "Oops--Tie Game :-("
 
 
 
@@ -119,7 +136,7 @@ while True:
     
     if i % 2 == 0:
       p1 = input("Enter number of square to fill in: ")
-      modifyMem(int(p1),1)
+      modifyMem(p1,1)
       printBoard()
       if(gameCheck1()):
         winner = 1
@@ -127,7 +144,7 @@ while True:
     
     else:
       p2 = input("Enter number of square to fill in: ")
-      modifyMem(int(p2),2)
+      modifyMem(p2,2)
       printBoard()
       if(gameCheck2()):
         winner = 2
