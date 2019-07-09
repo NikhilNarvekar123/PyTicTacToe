@@ -42,23 +42,6 @@ def printBoard():
     else:
       print("\n"+border+"\n")  
 
-def modifyMem(inp, player):
-  
-  verifiedIn = 0
-
-
-  while not inputCheck(inp):
-    inp = input("Invalid response! Try again.")
-  verifiedIn = int(inp)
-  
-  for i in range(len(elem)):
-    if elem[i] == str(verifiedIn):
-      if(player == 1):
-        elem[i] = "X"
-      else:
-        elem[i] = "O"
-    
-
 # Check board every round
 def gameCheck1():
   
@@ -106,8 +89,7 @@ def gameCheck2():
   
   return False
 
-# TODO: Function to check whether input is valid each turn
-# Current filters out wrong format input, but still cannot stop players from filling filled up spaces
+# Work together to prevent invalid input or filling in squares that are already taken, progress game
 def inputCheck(x):
   try:
     x = int(x)
@@ -117,7 +99,29 @@ def inputCheck(x):
     return False
   except:
     return False
+def checkLoop(inp):
+  while not inputCheck(inp):
+    inp = input("Invalid response! Try again.")
+  return int(inp)
+def modifyMem(inp, player):
+  
+  verifiedIn = 0
+  exit = False
 
+  verifiedIn = checkLoop(inp)
+  
+  while not exit:
+    for i in range(len(elem)):
+      if (elem[i] == str(verifiedIn)) and (elem[i] != 'X' or elem != 'O') :
+        if(player == 1):
+          elem[i] = "X"
+        else:
+          elem[i] = "O"
+        exit = True
+    if not exit:
+      inp = input("Already filled! Choose another square.")
+      verifiedIn = checkLoop(inp)
+  
 
 
 
