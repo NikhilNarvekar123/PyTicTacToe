@@ -6,12 +6,16 @@ POTENTIAL BUGS: If input is not a number, game will crash :-(
 
 '''
 
+import random as ra
+
+
 # Input Variables
 p1 = ""
 p2 = ""
 winner = -1
 victoryMsg = "WINNER WINNER CHICKEN DINNER! Congrats Player "
 tieMsg = "Oops--Tie Game :-("
+winCombos = [[1,2,3],[4,5,6],[7,8,9],[1,4,7],[2,5,8],[3,6,9],[1,5,9],[3,5,7]]
 
 
 # Board objects
@@ -43,13 +47,13 @@ def printBoard():
       print("\n"+border+"\n")  
 
 # Check board every round
-def gameCheck1():
+def gameCheck1(arr):
   
   num = 0
   pos= []
 
-  for i in range(len(elem)):
-    if(elem[i] == "X"):
+  for i in range(len(arr)):
+    if(arr[i] == "X"):
       num += 1
       pos.append(i+1)
   
@@ -65,13 +69,13 @@ def gameCheck1():
           return True
   
   return False
-def gameCheck2():
+def gameCheck2(arr):
   
   num = 0
   pos= []
 
-  for i in range(len(elem)):
-    if(elem[i] == "O"):
+  for i in range(len(arr)):
+    if(arr[i] == "O"):
       num += 1
       pos.append(i+1)
   
@@ -125,6 +129,69 @@ def modifyMem(inp, player):
 
 
 
+
+
+
+
+
+
+
+# Overall AI Control
+def aiControl2(step):
+  data = elem.copy() 
+  for i in data:
+    if i == 'X' or i == 'O':
+      data.remove(i)
+  if step == 1:
+    num = data[ra.randint(0,len(data))]
+    modifyMem(num,2)
+  if step == 2:
+    None
+
+# Scans the board for AI block move
+def aiScan():
+  match = None
+  num = 0
+  pos= []
+
+  for i in range(len(elem)):
+    if elem[i] == "X":
+      num += 1
+      pos.append(i+1)
+  
+  if num == 2:
+
+    for i in range(len(winCombos)):
+      if pos[0] in winCombos[i]:
+        if pos[1] in winCombos[i]:
+          match = winCombos[i]
+  
+    return match[2]
+
+# Scans board for AI win move
+def buildChain():
+  None
+
+  
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ''' Actual Game '''
 
 print("\nWelcome to TicTacToe, 2-player mode!")
@@ -142,7 +209,7 @@ while True:
       p1 = input("Enter number of square to fill in: ")
       modifyMem(p1,1)
       printBoard()
-      if(gameCheck1()):
+      if(gameCheck1(elem)):
         winner = 1
         break
     
@@ -150,7 +217,7 @@ while True:
       p2 = input("Enter number of square to fill in: ")
       modifyMem(p2,2)
       printBoard()
-      if(gameCheck2()):
+      if(gameCheck2(elem)):
         winner = 2
         break
 
