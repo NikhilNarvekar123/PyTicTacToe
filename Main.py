@@ -1,192 +1,122 @@
-''' 
-Interactive tic-tac-toe for two players, with readable code for learners
-POTENTIAL BUGS: If input is not a number, game will crash :-(
-    
---Created By Young Bytes--
+import copy
+import random as r
 
-'''
+class Main:
+    board = []
+    def __init__(self):
+        Main.board = ["1","2","3","4","5","6","7","8","9"]
 
-import random as ra
+    def printBoard(self):
+
+        border = "____________"
+        sep =    "------------"
+        count = 0;
+
+        print(border)
+        for j in range(3):
+
+            for i in range(11):
+                if((i+1) % 4 == 0):
+                    print("|",end="")
+                elif((i+1) % 4 == 2):
+                    print(Main.board[count],end="")
+                    count += 1
+                else:
+                    print(" ",end="")
+
+            if(j!=2):
+                print("\n"+sep)
+            else:
+                print("\n"+border+"\n")
+
+    def processMove(self, inp, player):
+        Main.board[inp] = player
+        x = self.checkWin(Main.board)
+        return x
 
 
-# Input Variables
-p1 = ""
-p2 = ""
-winner = -1
-victoryMsg = "WINNER WINNER CHICKEN DINNER! Congrats Player "
-tieMsg = "Oops--Tie Game :-("
-winCombos = [[1,2,3],[4,5,6],[7,8,9],[1,4,7],[2,5,8],[3,6,9],[1,5,9],[3,5,7]]
+    def checkWin(self, boardState):
+
+        for r in range(0, 9, 3):
+            if(boardState[r] == boardState[r+1] == boardState[r+2]):
+                return boardState[r]
+
+        for c in range(0, 2):
+            if(boardState[c] == boardState[c+3] == boardState[c+6]):
+                return boardState[r]
+
+        if(boardState[0] == boardState[4] == boardState[8]):
+            return boardState[0]
+        if(boardState[2] == boardState[4] == boardState[6]):
+            return boardState[2]
+
+        return ''
 
 
-# Board objects
-border = "____________"
-sep =    "------------"
-elem = ["1","2","3","4","5","6","7","8","9"]
 
-# Output methods
-def printBoard():
-  
-  count = 0;
 
-  print(border)
-  
-  for j in range(3):
-    
-    for i in range(11):
-      if((i+1) % 4 == 0):
-        print("|",end="")
-      elif((i+1) % 4 == 2):
-          print(elem[count],end="")
-          count += 1
-      else:
-        print(" ",end="")
-    
-    if(j!=2):
-      print("\n"+sep)
-    else:
-      print("\n"+border+"\n")  
+class Player(Main):
 
-# Check board every round
-def gameCheck1(arr):
-  
-  num = 0
-  pos= []
 
-  for i in range(len(arr)):
-    if(arr[i] == "X"):
-      num += 1
-      pos.append(i+1)
-  
-  if num >= 3:
-    for j in range(len(pos)-2):
-      dif = (pos[j+2] - pos[j+1] == pos[j+1] - pos[j])
-      wow = pos[j+1] - pos[j]
+    def __init__(self, name):
+        self.name = name
+        print("Welcome Player ", self.name, "!")
 
-      if dif and (wow == 3 or wow == 4):
-        return True
-      elif dif and (wow == 1):
-        if not ((3 in pos and 4 in pos) or (4 in pos and 5 in pos)):
-          return True
-  
-  return False
-def gameCheck2(arr):
-  
-  num = 0
-  pos= []
+    def handleInput(self, inp):
 
-  for i in range(len(arr)):
-    if(arr[i] == "O"):
-      num += 1
-      pos.append(i+1)
-  
-  if num >= 3:
-    for j in range(len(pos)-2):
-      dif = (pos[j+2] - pos[j+1] == pos[j+1] - pos[j])
-      wow = pos[j+1] - pos[j]
+        validInput = False
+        while not validInput:
+            x = inp
+            try:
+                x = int(x)
+                if x >= 1 and x <= 9:
+                    if Main.board[x-1] != "X" or Main.board[x-1] != "O":
+                        validInput = True
+                        self.input = x
+                        break
+            except:
+                validInput = False
+            inp = input("Invalid input entered! Try again")
 
-      if dif and (wow == 3 or wow == 4):
-        return True
-      elif dif and (wow == 1):
-        if not ((3 in pos and 4 in pos) or (4 in pos and 5 in pos)):
-          return True
+        return self.input - 1
 
-  
-  return False
 
-# Work together to prevent invalid input or filling in squares that are already taken, progress game
-def inputCheck(x):
-  try:
-    x = int(x)
-    if x >= 1 and x <= 9:
-      if elem[x-1] != "X" or elem[x-1] != "O":
-        return True  
-    return False
-  except:
-    return False
-def checkLoop(inp):
-  while not inputCheck(inp):
-    inp = input("Invalid response! Try again.")
-  return int(inp)
-def modifyMem(inp, player):
-  
-  verifiedIn = 0
-  exit = False
+class AI(Main):
 
-  verifiedIn = checkLoop(inp)
-  
-  while not exit:
-    for i in range(len(elem)):
-      if (elem[i] == str(verifiedIn)) and (elem[i] != 'X' or elem != 'O') :
-        if(player == 1):
-          elem[i] = "X"
+    def __init__(self):
+        print("AI client created!")
+        self.moveList = []
+
+    def makeMove(self):
+        #self.generateMoves()
+        self.moveList = []
+        for i in range(9):
+            if(Main.board[i] != 'X' and Main.board[i] != 'O'):
+                 self.moveList.append(i)
+        print(self.moveList)
+        return self.moveList[r.randint(0, len(self.moveList) - 1)]
+
+    #have to pass copy
+    def generateMoves(self, boardState, scoreInit):
+
+        return 1
+        '''
+        score = scoreInit
+        winRez = self.checkWin(boardState)
+        if(winRez == 'O'):
+            return 10
+        elif(winRez == 'X'):
+            return -10
         else:
-          elem[i] = "O"
-        exit = True
-    if not exit:
-      inp = input("Already filled! Choose another square.")
-      verifiedIn = checkLoop(inp)
-  
+            return 0
 
-
-
-
-
-
-
-
-
-
-# Overall AI Control
-def aiControl2(step):
-  data = elem.copy() 
-  for i in data:
-    if i == 'X' or i == 'O':
-      data.remove(i)
-  if step == 1:
-    num = data[ra.randint(0,len(data))]
-    modifyMem(num,2)
-  if step == 2:
-    None
-
-# Scans the board for AI block move
-def aiScan():
-  match = None
-  num = 0
-  pos= []
-
-  for i in range(len(elem)):
-    if elem[i] == "X":
-      num += 1
-      pos.append(i+1)
-  
-  if num == 2:
-
-    for i in range(len(winCombos)):
-      if pos[0] in winCombos[i]:
-        if pos[1] in winCombos[i]:
-          match = winCombos[i]
-  
-    return match[2]
-
-# Scans board for AI win move
-def buildChain():
-  None
-
-  
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
+        for i in range(9):
+            if(boardState[i] == 'X' or boardState[i] == 'O'):
+                continue
+            boardCopy = copy.deepcopy(boardState)
+            boardCopy[i] = 'O'
+            score += self.generateMoves(boardCopy, score)
+        '''
 
 
 
@@ -194,41 +124,37 @@ def buildChain():
 
 ''' Actual Game '''
 
-print("\nWelcome to TicTacToe, 2-player mode!")
+print("Welcome to AI tic-tac-toe!")
+print("Meant to be a simple exploration of the minmax algorithm")
+input("Press any key to begin!\n")
+game = Main()
+player = Player("om")
+ai = AI()
 
 # Game Loop
 while True:
 
-  print("\n**GAME STARTED! -- Every turn, enter the letter of space to fill**\n")
-  printBoard()
+    print("\n**GAME STARTED! -- Every turn, enter the letter of space to fill**\n")
+    game.printBoard()
 
-  # Player Turns
-  for i in range(10):
-    
-    if i % 2 == 0:
-      p1 = input("Enter number of square to fill in: ")
-      modifyMem(p1,1)
-      printBoard()
-      if(gameCheck1(elem)):
-        winner = 1
-        break
-    
-    else:
-      p2 = input("Enter number of square to fill in: ")
-      modifyMem(p2,2)
-      printBoard()
-      if(gameCheck2(elem)):
-        winner = 2
-        break
+    winner = "draw!"
 
-  # Result Outputter
-  if winner == 1:
-    print("\n" + victoryMsg + "1!")
-  elif winner == 2:
-    print("\n" + victoryMsg + "2!")
-  else:
-    print("\n" + tieMsg)
-  
-  elem =["1","2","3","4","5","6","7","8","9"]
-  input("\nEnter any key to restart!")
-  
+    while(True): #game.checkWin() == ''):
+
+        p1 = input("Enter number of square to fill in:")
+        p1 = player.handleInput(p1)
+        winner = game.processMove(p1, 'X')
+        game.printBoard()
+
+        print("AI making their move...")
+        a1 = ai.makeMove()
+        winner = game.processMove(a1, 'O')
+        game.printBoard()
+
+        if winner == 'X' or winner == 'O':
+            print("Winner is ", winner, "!")
+            break
+
+    game = Main()
+    ai = AI()
+    input("\nEnter any key to restart!")
