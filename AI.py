@@ -1,5 +1,17 @@
 import copy
 import random as r
+# 
+# class AI:
+#
+#     def __init__(self):
+#
+#
+#
+#
+
+
+
+
 
 class Main:
     board = []
