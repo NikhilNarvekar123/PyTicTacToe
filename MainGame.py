@@ -1,5 +1,5 @@
 import tkinter as tk
-
+from AI import AI
 
 class MainGame(tk.Frame):
 
@@ -11,6 +11,7 @@ class MainGame(tk.Frame):
         self.aiScore = 0
         self.playerTurn = True
         self.create_widgets()
+        self.ai = AI(self.board)
 
     def create_widgets(self):
         buttons = tk.StringVar()
@@ -95,22 +96,23 @@ class MainGame(tk.Frame):
 
         self.board = [[''] * 3, [''] * 3, [''] * 3]
         self.create_widgets()
+        self.playerTurn = True
 
 
     def btnClick(self, btn, r, c):
-        if btn['text'] == '' and self.playerTurn:
+
+        if btn['text'] == '':
             btn['text'] = 'X'
-            self.playerTurn = not self.playerTurn
             self.board[r][c] = 'X'
-        elif btn['text'] == '':
-            btn['text'] = 'O'
-            self.playerTurn = not self.playerTurn
-            self.board[r][c] = 'O'
 
         rez = self.checkWin()
         if rez != 'n':
             self.reset(rez)
 
+        newBoard = self.ai.makeMove(self.board)
+
+        self.board = newBoard
+        self.create_widgets()
 
 
 root = tk.Tk()

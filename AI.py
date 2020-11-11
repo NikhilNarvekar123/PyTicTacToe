@@ -1,172 +1,123 @@
-import copy
-import random as r
-# 
-# class AI:
-#
-#     def __init__(self):
-#
-#
-#
-#
+import math as m
+
+class AI:
+
+    def __init__(self, boardState):
+        self.boardState = boardState
 
 
 
 
+    def updateBoard(self, boardState):
+        self.boardState = boardState
+        return self.boardState
 
-class Main:
-    board = []
-    def __init__(self):
-        Main.board = ["1","2","3","4","5","6","7","8","9"]
 
-    def printBoard(self):
+    def minmax(self, player, move = None):
 
-        border = "____________"
-        sep =    "------------"
-        count = 0;
+        if move != None:
+            self.boardState[move[0]][move[1]] = 'O'
 
-        print(border)
-        for j in range(3):
-
-            for i in range(11):
-                if((i+1) % 4 == 0):
-                    print("|",end="")
-                elif((i+1) % 4 == 2):
-                    print(Main.board[count],end="")
-                    count += 1
-                else:
-                    print(" ",end="")
-
-            if(j!=2):
-                print("\n"+sep)
+        res = self.gameOver()
+        if res != 'n':
+            if res == 'X':
+                return -1
+            elif res == 'O':
+                return 1
             else:
-                print("\n"+border+"\n")
+                return 0
 
-    def processMove(self, inp, player):
-        Main.board[inp] = player
-        x = self.checkWin(Main.board)
-        return x
+        if player == 'AI':
+            max = -m.inf
+            for r in range(3):
+                for c in range(3):
+                    if(self.boardState[r][c] == ''):
+                        self.boardState[r][c] = 'O'
+                        val = self.minmax('Human')
+                        max = max(max, val)
+                        self.boardState[r][c] = ''
+            return max
 
-
-    def checkWin(self, boardState):
-
-        for r in range(0, 9, 3):
-            if(boardState[r] == boardState[r+1] == boardState[r+2]):
-                return boardState[r]
-
-        for c in range(0, 2):
-            if(boardState[c] == boardState[c+3] == boardState[c+6]):
-                return boardState[r]
-
-        if(boardState[0] == boardState[4] == boardState[8]):
-            return boardState[0]
-        if(boardState[2] == boardState[4] == boardState[6]):
-            return boardState[2]
-
-        return ''
-
+        elif player == 'Human':
+            min = m.inf
+            for r in range(3):
+                for c in range(3):
+                    if(self.boardState[r][c] == ''):
+                        self.boardState[r][c] = 'X'
+                        val = self.minmax('AI')
+                        min = min(min, val)
+                        self.boardState[r][c] = ''
+            return min
 
 
+    def makeMove(self, boardState):
 
-class Player(Main):
+        board = self.updateBoard(boardState)
 
+        initMoves = []
+        for r in range(3):
+            for c in range(3):
+                if(self.boardState[r][c] == ''):
+                    initMoves.append((r,c))
 
-    def __init__(self, name):
-        self.name = name
-        print("Welcome Player ", self.name, "!")
+        maxMove = None
+        for move in initMoves:
+            val = self.minmax('Human', move)
+            self.boardState[move[0]][move[1]] = ''
+            if (not maxMove) or maxMove[1] < val:
+                maxMove = (move, val)
 
-    def handleInput(self, inp):
-
-        validInput = False
-        while not validInput:
-            x = inp
-            try:
-                x = int(x)
-                if x >= 1 and x <= 9:
-                    if Main.board[x-1] != "X" or Main.board[x-1] != "O":
-                        validInput = True
-                        self.input = x
-                        break
-            except:
-                validInput = False
-            inp = input("Invalid input entered! Try again")
-
-        return self.input - 1
+        print(maxMove)
+        self.boardState[maxMove[0][0]][maxMove[0][1]] = 'O'
 
 
-class AI(Main):
 
-    def __init__(self):
-        print("AI client created!")
-        self.moveList = []
 
-    def makeMove(self):
-        #self.generateMoves()
-        self.moveList = []
-        for i in range(9):
-            if(Main.board[i] != 'X' and Main.board[i] != 'O'):
-                 self.moveList.append(i)
-        print(self.moveList)
-        return self.moveList[r.randint(0, len(self.moveList) - 1)]
-
-    #have to pass copy
-    def generateMoves(self, boardState, scoreInit):
-
-        return 1
-        '''
-        score = scoreInit
-        winRez = self.checkWin(boardState)
-        if(winRez == 'O'):
-            return 10
-        elif(winRez == 'X'):
-            return -10
-        else:
-            return 0
-
-        for i in range(9):
-            if(boardState[i] == 'X' or boardState[i] == 'O'):
-                continue
-            boardCopy = copy.deepcopy(boardState)
-            boardCopy[i] = 'O'
-            score += self.generateMoves(boardCopy, score)
-        '''
+        return board
 
 
 
 
 
-''' Actual Game '''
 
-print("Welcome to AI tic-tac-toe!")
-print("Meant to be a simple exploration of the minmax algorithm")
-input("Press any key to begin!\n")
-game = Main()
-player = Player("om")
-ai = AI()
+    def isMoveValid(self, r, c, board) -> bool:
+        if r < 0 or r > 2:
+            return False
+        if c < 0 or c > 2:
+            return False
+        if board[r][c] == '':
+            return False
+        return True
 
-# Game Loop
-while True:
 
-    print("\n**GAME STARTED! -- Every turn, enter the letter of space to fill**\n")
-    game.printBoard()
 
-    winner = "draw!"
 
-    while(True): #game.checkWin() == ''):
 
-        p1 = input("Enter number of square to fill in:")
-        p1 = player.handleInput(p1)
-        winner = game.processMove(p1, 'X')
-        game.printBoard()
+    def gameOver(self):
+        brd = self.boardState
 
-        print("AI making their move...")
-        a1 = ai.makeMove()
-        winner = game.processMove(a1, 'O')
-        game.printBoard()
+        if brd[0][0] == brd[0][1] == brd[0][2] and (brd[0][0] != ''):
+            return brd[0][0]
+        if brd[1][0] == brd[1][1] == brd[1][2] and (brd[1][0] != ''):
+            return brd[1][0]
+        if brd[2][0] == brd[2][1] == brd[2][2] and (brd[2][0] != ''):
+            return brd[2][0]
 
-        if winner == 'X' or winner == 'O':
-            print("Winner is ", winner, "!")
-            break
+        if brd[0][0] == brd[1][0] == brd[2][0] and (brd[0][0] != ''):
+            return brd[0][0]
+        if brd[0][1] == brd[1][1] == brd[2][1] and (brd[0][1] != ''):
+            return brd[0][1]
+        if brd[0][2] == brd[1][2] == brd[2][2] and (brd[0][2] != ''):
+            return brd[0][2]
 
-    game = Main()
-    ai = AI()
-    input("\nEnter any key to restart!")
+        if brd[0][0] == brd[1][1] == brd[2][2] and (brd[0][0] != ''):
+            return brd[0][0]
+        if brd[0][2] == brd[1][1] == brd[2][0] and (brd[0][2] != ''):
+            return brd[0][2]
+
+        for r in range(3):
+            for c in range(3):
+                if brd[r][c] == '':
+                    return 't'
+
+        return 'n'
