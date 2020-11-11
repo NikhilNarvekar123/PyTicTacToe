@@ -1,28 +1,36 @@
 import tkinter as tk
 from AI import AI
 
+# Class for Tkinter game frame. Contains code for player to make moves and display the board. Uses
+# the AI helper class to let the AI agent make moves.
 class MainGame(tk.Frame):
 
     def __init__(self, master=None):
+
+        # tkinter boilerplate
         super().__init__(master)
         self.master = master
+
+        # class variables
         self.board = [[''] * 3, [''] * 3, [''] * 3]
         self.playerScore = 0
         self.aiScore = 0
-        self.playerTurn = True
-        self.create_widgets()
         self.ai = AI(self.board)
 
-    def create_widgets(self):
-        buttons = tk.StringVar()
+        # spawn game board
+        self.create_widgets()
 
+    def create_widgets(self):
+
+        # text for player score
         self.label1 = tk.Label(text="Player 1: " + str(self.playerScore), font='Roboto 20 bold', bg='white', fg='black', height=1, width=8)
         self.label1.grid(row=1, column=0)
 
-
+        # text for AI score
         self.label2 = tk.Label(text="AI:" + str(self.aiScore), font='Roboto 20 bold', bg='white', fg='black', height=1, width=8)
         self.label2.grid(row=2, column=0)
 
+        # represent 9 grid buttons for tictactoe board
         button1 = tk.Button(text=self.board[0][0], font='Roboto 20 bold', bg='black', fg='white', height=4, width=8, command=lambda: self.btnClick(button1, 0, 0))
         button1.grid(row=3, column=0)
 
@@ -50,10 +58,16 @@ class MainGame(tk.Frame):
         button9 = tk.Button(text=self.board[2][2], font='Roboto 20 bold', bg='black', fg='white', height=4, width=8, command=lambda: self.btnClick(button9, 2, 2))
         button9.grid(row=5, column=2)
 
-
     def checkWin(self):
+        """Checks if either the AI or player has won the game (or if board is all full)
+           'f' represents a full board, 'X' represents player win, 'O' represents AI win,
+           'n' represents no win yet
+        """
+
+        # create temp copy for ease
         brd = self.board
 
+        # row check
         if brd[0][0] == brd[0][1] == brd[0][2] and (brd[0][0] != ''):
             return brd[0][0]
         if brd[1][0] == brd[1][1] == brd[1][2] and (brd[1][0] != ''):
@@ -61,6 +75,7 @@ class MainGame(tk.Frame):
         if brd[2][0] == brd[2][1] == brd[2][2] and (brd[2][0] != ''):
             return brd[2][0]
 
+        # column check
         if brd[0][0] == brd[1][0] == brd[2][0] and (brd[0][0] != ''):
             return brd[0][0]
         if brd[0][1] == brd[1][1] == brd[2][1] and (brd[0][1] != ''):
@@ -68,22 +83,24 @@ class MainGame(tk.Frame):
         if brd[0][2] == brd[1][2] == brd[2][2] and (brd[0][2] != ''):
             return brd[0][2]
 
+        # diagonal check
         if brd[0][0] == brd[1][1] == brd[2][2] and (brd[0][0] != ''):
             return brd[0][0]
         if brd[0][2] == brd[1][1] == brd[2][0] and (brd[0][2] != ''):
             return brd[0][2]
 
+        # checks if board is all full
         filled = True
         for r in range(3):
             for c in range(3):
                 if brd[r][c] == '':
                     filled = False
                     break
+
         return 'n' if not filled else 'f'
 
-
-
     def reset(self, winner):
+        """Changes the player/ai score and resets the board for a new game"""
 
         if winner == 'X':
             self.playerScore += 1
@@ -94,27 +111,37 @@ class MainGame(tk.Frame):
         if winner == 'f':
             print('Draw!')
 
+        # reset/redraw board
         self.board = [[''] * 3, [''] * 3, [''] * 3]
         self.create_widgets()
-        self.playerTurn = True
-
 
     def btnClick(self, btn, r, c):
+        """Makes the player move based on clicked square, also conducts subsequent AI move"""
 
+        # if space not occupied (otherwise exit)
         if btn['text'] == '':
             btn['text'] = 'X'
             self.board[r][c] = 'X'
+        else:
+            return
 
+        # check win for player and reset if game over
         rez = self.checkWin()
         if rez != 'n':
             self.reset(rez)
 
+        # make AI move and update board
         newBoard = self.ai.makeMove(self.board)
-
         self.board = newBoard
         self.create_widgets()
 
+        # check win for AI and reset if game over
+        rez = self.checkWin()
+        if rez != 'n':
+            self.reset(rez)
 
+
+# Launch game via tkinter
 root = tk.Tk()
 app = MainGame(master=root)
 app.mainloop()
