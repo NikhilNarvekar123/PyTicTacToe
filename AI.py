@@ -12,7 +12,7 @@ class AI:
         self.boardState = boardState
         return self.boardState
 
-    def minmax(self, player, move = None):
+    def minmax(self, player, alpha = 0, beta = 0, move = None):
         """ Runs the recursive algorithm which maximizes the AI score while minimizing the user score
             Highest valuation means best moveset for AI to make to win
             Lowest valuation means best moveset for player to make to win
@@ -50,7 +50,13 @@ class AI:
 
                         # if valuation is higher than valuation for other potential move, set this valuation to max
                         maxVal = max(maxVal, val)
+                        alpha = max(alpha, val)
                         #maxVal += val
+
+                        # if maxVal >= beta:
+                        #     return maxVal
+                        # if maxVal > alpha:
+                        #     alpha = mavVal
 
                         # reset board
                         self.boardState[r][c] = ''
@@ -73,7 +79,13 @@ class AI:
 
                         # if valuation is smaller than valuation for other potential move, set this valuation to min
                         minVal = min(minVal, val)
+                        #beta = min(beta, val)
                         #minVal -= val
+
+                        # if minVal <= alpha:
+                        #     return minVal
+                        # if minVal < beta:
+                        #     beta = minVal
 
                         # reset board
                         self.boardState[r][c] = ''
@@ -96,7 +108,7 @@ class AI:
         # calculates valuation for each potential move and finds the best move
         maxMove = None
         for move in initMoves:
-            val = self.minmax('Human', move)
+            val = self.minmax('Human', -m.inf, m.inf, move)
             self.boardState[move[0]][move[1]] = ''
             if (not maxMove) or maxMove[1] < val:
                 maxMove = (move, val)
