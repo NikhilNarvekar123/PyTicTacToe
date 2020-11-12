@@ -141,7 +141,7 @@ class MainGame(tk.Frame):
             self.reset(rez)
 
 
-# Launch game via tkinter
+# Launch game via tkinter and initialize
 root = tk.Tk()
 app = MainGame(master=root)
 app.mainloop()
